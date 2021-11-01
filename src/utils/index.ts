@@ -20,7 +20,7 @@ export const useMount = (callback: () => void) => {
   }, [])
 }
 
-export const useDebounce = (value: unknown, delay?: number): any => {
+export const useDebounce = <V>(value: V, delay?: number) => {
   // 用useState 定义的状态，会触发组件刷新
   const [debouncedValue, setDebouncedValue] = useState(value)
   useEffect(() => {
