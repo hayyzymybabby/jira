@@ -27,6 +27,8 @@ export const useAsync = <D>(
 
   const config = { ...defaultConfig, ...initialConfig }
 
+  const [retry, setRetry] = useState(() => () => {})
+
   const setData = (data: D) =>
     setState({
       data,
@@ -42,10 +44,18 @@ export const useAsync = <D>(
     })
 
   // run用来触发异步请求
-  const run = (promise: Promise<D>) => {
+  const run = (
+    promise: Promise<D>,
+    runConfig?: { retry: () => Promise<D> }
+  ) => {
     if (!promise || !promise.then) {
       throw new Error('请传入 Promise 类型数据')
     }
+    setRetry(() => () => {
+      if (runConfig?.retry) {
+        run(runConfig?.retry(), runConfig)
+      }
+    })
     setState({ ...state, stat: 'loading' })
     return promise
       .then(data => {
@@ -70,6 +80,8 @@ export const useAsync = <D>(
     run,
     setData,
     setError,
+    // retry 被调用时 重新跑一次run
+    retry,
     ...state
   }
 }
