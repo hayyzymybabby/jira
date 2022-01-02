@@ -62,3 +62,6 @@ export const ScreenContainer = styled.div`
   display: flex;
   flex-direction: column;
 `
+export const LongButton = styled(Button)`
+  width: 100%;
+`
