@@ -15,7 +15,7 @@ export const ProjectListScreen = () => {
     personId: ''
   })
 
-  const debouncedParam = useDebounce(param, 2000)
+  const debouncedParam = useDebounce(param, 300)
 
   const [list, setList] = useState([])
 
@@ -35,7 +35,7 @@ export const ProjectListScreen = () => {
         setUsers(await response.json())
       }
     })
-  }, [])
+  })
 
   return (
     <div>
