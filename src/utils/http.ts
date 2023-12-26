@@ -46,6 +46,7 @@ export const http = async (
 
 export const useHttp = () => {
   const { user } = useAuth()
+  // Parameters 读取函数的参数的类型 以tuple的形式返回出来
   return (...[endpoint, config]: Parameters<typeof http>) =>
     http(endpoint, { ...config, token: user?.token })
 }
