@@ -43,6 +43,7 @@ export const FullPageErrorFallback = ({ error }: { error: Error | null }) => (
 )
 
 // 类型守卫
+// is 关键字一般用于函数返回值类型中，判断参数是否属于某一类型，并根据结果返回对应的布尔类型。
 const isError = (value: any): value is Error => value?.message
 
 export const ErrorBox = ({ error }: { error: unknown }) => {
