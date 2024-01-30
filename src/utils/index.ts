@@ -33,3 +33,19 @@ export const useDebounce = <V>(value: V, delay?: number) => {
   // 第一次直接就返回了，第一次也没有做任何更改，debounceValue相同
   return debounceValue
 }
+
+export const useDocumentTitle = (title: string, keepOnUnmount = true) => {
+  const oldTitle = document.title
+
+  useEffect(() => {
+    document.title = title
+  }, [title])
+
+  useEffect(() => {
+    return () => {
+      if (!keepOnUnmount) {
+        document.title = oldTitle
+      }
+    }
+  }, [])
+}

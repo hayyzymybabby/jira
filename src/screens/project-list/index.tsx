@@ -2,7 +2,7 @@ import { useState } from 'react'
 import styled from '@emotion/styled'
 import { SearchPanel } from './search-panel'
 import { List } from './list'
-import { useDebounce } from '../../utils'
+import { useDebounce, useDocumentTitle } from '../../utils'
 import { Typography } from 'antd'
 import { useProjects } from 'utils/project'
 import { useUsers } from 'utils/user'
@@ -16,6 +16,8 @@ export const ProjectListScreen = () => {
   const debouncedParam = useDebounce(param, 300)
   const { isLoading, error, data: list } = useProjects(debouncedParam)
   const { data: users } = useUsers()
+
+  useDocumentTitle('项目列表', false)
 
   return (
     <Container>
