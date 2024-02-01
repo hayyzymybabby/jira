@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 
 export const isVoid = (value: unknown) =>
   value === undefined || value === null || value === ''
@@ -35,7 +35,9 @@ export const useDebounce = <V>(value: V, delay?: number) => {
 }
 
 export const useDocumentTitle = (title: string, keepOnUnmount = true) => {
-  const oldTitle = document.title
+  const oldTitle = useRef(document.title).current
+  // 页面加载时: 旧title
+  // 加载后：新title
 
   useEffect(() => {
     document.title = title
@@ -44,8 +46,9 @@ export const useDocumentTitle = (title: string, keepOnUnmount = true) => {
   useEffect(() => {
     return () => {
       if (!keepOnUnmount) {
+        // 如果不指定依赖，读到的就是旧title
         document.title = oldTitle
       }
     }
-  }, [])
+  }, [keepOnUnmount, oldTitle])
 }
