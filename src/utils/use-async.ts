@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react'
+import { useCallback, useReducer, useState } from 'react'
 import { useMountedRef } from 'utils'
 
 interface State<D> {
@@ -17,36 +17,54 @@ const defaultConfig = {
   throwOnError: false
 }
 
+const useSafeDispatch = <T>(dispatch: (...args: T[]) => void) => {
+  const moundtedRef = useMountedRef()
+
+  return useCallback(
+    (...args: T[]) => (moundtedRef.current ? dispatch(...args) : void 0),
+    [dispatch, moundtedRef]
+  )
+}
+
 export const useAsync = <D>(
   initialState?: State<D>,
   initialConfig?: typeof defaultConfig
 ) => {
   const config = { ...defaultConfig, ...initialConfig }
 
-  const [state, setState] = useState<State<D>>({
-    ...defaultInitialState,
-    ...initialState
-  })
+  const [state, dispatch] = useReducer(
+    (state: State<D>, action: Partial<State<D>>) => ({ ...state, ...action }),
+    {
+      ...defaultInitialState,
+      ...initialState
+    }
+  )
 
-  const moundtedRef = useMountedRef()
+  const safeDispatch = useSafeDispatch(dispatch)
 
   const [retry, setRetry] = useState(() => () => {})
 
-  const setData = useCallback((data: D) => {
-    setState({
-      data,
-      stat: 'success',
-      error: null
-    })
-  }, [])
+  const setData = useCallback(
+    (data: D) => {
+      safeDispatch({
+        data,
+        stat: 'success',
+        error: null
+      })
+    },
+    [safeDispatch]
+  )
 
-  const setError = useCallback((error: Error) => {
-    setState({
-      error,
-      stat: 'error',
-      data: null
-    })
-  }, [])
+  const setError = useCallback(
+    (error: Error) => {
+      safeDispatch({
+        error,
+        stat: 'error',
+        data: null
+      })
+    },
+    [safeDispatch]
+  )
 
   const run = useCallback(
     (promise: Promise<D>, runConfig?: { retry: () => Promise<D> }) => {
@@ -60,11 +78,11 @@ export const useAsync = <D>(
         }
       })
 
-      setState(prevState => ({ ...prevState, stat: 'loading' }))
+      safeDispatch({ stat: 'loading' })
 
       return promise
         .then(data => {
-          if (moundtedRef.current) setData(data)
+          setData(data)
           return data
         })
         .catch(error => {
@@ -73,7 +91,7 @@ export const useAsync = <D>(
           return error
         })
     },
-    [config.throwOnError, moundtedRef, setData, setError]
+    [config.throwOnError, setData, setError, safeDispatch]
   )
 
   return {
