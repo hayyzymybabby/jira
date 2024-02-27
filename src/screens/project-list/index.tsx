@@ -5,10 +5,11 @@ import { useDebounce, useDocumentTitle } from '../../utils'
 import { Typography } from 'antd'
 import { useProjects } from 'utils/project'
 import { useUsers } from 'utils/user'
-import { useProjectsSearchParams } from './util'
-import { Row } from 'components/lib'
+import { useProjectModal, useProjectsSearchParams } from './util'
+import { ButtonNoPadding, Row } from 'components/lib'
 
-export const ProjectListScreen = (props: { projectButton: JSX.Element }) => {
+export const ProjectListScreen = () => {
+  const { open } = useProjectModal()
   const [param, setParam] = useProjectsSearchParams()
 
   const {
@@ -25,14 +26,15 @@ export const ProjectListScreen = (props: { projectButton: JSX.Element }) => {
     <Container>
       <Row between={true}>
         <h1>项目列表</h1>
-        {props.projectButton}
+        <ButtonNoPadding onClick={open} type={'link'}>
+          创建项目
+        </ButtonNoPadding>
       </Row>
       <SearchPanel users={users || []} param={param} setParam={setParam} />
       {error ? (
         <Typography.Text type={'danger'}>{error.message}</Typography.Text>
       ) : null}
       <List
-        projectButton={props.projectButton}
         refresh={retry}
         loading={isLoading}
         users={users || []}

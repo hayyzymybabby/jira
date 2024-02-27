@@ -19,7 +19,6 @@ export interface Project {
 interface ListProps extends TableProps<Project> {
   users: User[]
   refresh?: () => void
-  projectButton: JSX.Element
 }
 
 export const List = ({ users, ...props }: ListProps) => {
@@ -80,7 +79,6 @@ export const List = ({ users, ...props }: ListProps) => {
           render(value, project) {
             const items = [
               {
-                label: props.projectButton,
                 key: 'edit'
               }
             ]
