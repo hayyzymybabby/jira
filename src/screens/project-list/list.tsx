@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom'
 import { Pin } from 'components/pin'
 import { useEditProject } from 'utils/project'
 import { ButtonNoPadding } from 'components/lib'
+import { useProjectModal } from './util'
 // react-router 和 react-router-dom的关系，类似于 react 和 react-dom/react-native/react-vr...
 
 export interface Project {
@@ -22,7 +23,10 @@ interface ListProps extends TableProps<Project> {
 
 export const List = ({ users, ...props }: ListProps) => {
   const { mutate } = useEditProject()
+  const { startEdit } = useProjectModal()
   const pinProject = (id: number) => (pin: boolean) => mutate({ id, pin })
+  const editProject = (id: number) => () => startEdit(id)
+
   return (
     <Table
       rowKey={'id'}
@@ -77,7 +81,19 @@ export const List = ({ users, ...props }: ListProps) => {
           render(value, project) {
             const items = [
               {
+                label: (
+                  <ButtonNoPadding
+                    type={'link'}
+                    onClick={editProject(project.id)}
+                  >
+                    编辑
+                  </ButtonNoPadding>
+                ),
                 key: 'edit'
+              },
+              {
+                label: <ButtonNoPadding type={'link'}>删除</ButtonNoPadding>,
+                key: 'delete'
               }
             ]
             return (

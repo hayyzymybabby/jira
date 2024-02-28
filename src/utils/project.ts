@@ -1,7 +1,6 @@
-import { useAsync } from './use-async'
 import { Project } from 'screens/project-list/list'
 import { useHttp } from './http'
-import { useQuery } from 'react-query'
+import { useMutation, useQuery, useQueryClient } from 'react-query'
 
 export const useProjects = (param?: Partial<Project>) => {
   const client = useHttp()
@@ -12,35 +11,42 @@ export const useProjects = (param?: Partial<Project>) => {
 }
 
 export const useEditProject = () => {
-  const { run, ...asyncResult } = useAsync()
   const client = useHttp()
-  const mutate = (params: Partial<Project>) => {
-    return run(
-      client(`projects/${params.id}`, {
-        data: params,
-        method: 'PATCH'
-      })
-    )
-  }
-  return {
-    mutate,
-    ...asyncResult
-  }
+  const queryClient = useQueryClient()
+
+  return useMutation(
+    (params: Partial<Project>) =>
+      client(`projects/${params.id}`, { method: 'PATCH', data: params }),
+    {
+      onSuccess: () => queryClient.invalidateQueries('projects')
+    }
+  )
 }
 
 export const useAddProject = () => {
-  const { run, ...asyncResult } = useAsync()
   const client = useHttp()
-  const mutate = (params: Partial<Project>) => {
-    return run(
-      client(`projects/${params.id}`, {
+  const queryClient = useQueryClient()
+
+  return useMutation(
+    (params: Partial<Project>) =>
+      client(`projects`, {
         data: params,
         method: 'POST'
-      })
-    )
-  }
-  return {
-    mutate,
-    ...asyncResult
-  }
+      }),
+    {
+      onSuccess: () => queryClient.invalidateQueries('projects')
+    }
+  )
+}
+
+export const useProject = (id?: number) => {
+  const client = useHttp()
+
+  return useQuery<Project[]>(
+    ['project', { id }],
+    () => client(`projects/${id}`),
+    {
+      enabled: Boolean(id)
+    }
+  )
 }
