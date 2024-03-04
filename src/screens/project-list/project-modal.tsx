@@ -27,6 +27,11 @@ export const ProjectModal = () => {
     })
   }
 
+  const closeModal = () => {
+    form.resetFields()
+    close()
+  }
+
   useEffect(() => {
     form.setFieldsValue(editingProject)
   }, [editingProject, form])
@@ -35,7 +40,7 @@ export const ProjectModal = () => {
     <Drawer
       forceRender={true}
       open={projectModalOpen}
-      onClose={close}
+      onClose={closeModal}
       width={'100%'}
     >
       <Container>
