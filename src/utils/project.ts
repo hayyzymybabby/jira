@@ -50,7 +50,7 @@ export const useDeleteProject = (queryKey: QueryKey) => {
 export const useProject = (id?: number) => {
   const client = useHttp()
 
-  return useQuery<Project[]>(
+  return useQuery<Project>(
     ['project', { id }],
     () => client(`projects/${id}`),
     {
