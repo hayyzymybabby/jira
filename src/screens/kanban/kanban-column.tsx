@@ -1,6 +1,6 @@
 import { Kanban } from 'types/kanban'
 import { useTasks } from 'utils/task'
-import { useTasksSearchParams } from './util'
+import { useTasksModal, useTasksSearchParams } from './util'
 import { useTaskTypes } from 'utils/task-type'
 import taskIcon from 'assets/task.svg'
 import bugIcon from 'assets/bug.svg'
@@ -26,12 +26,18 @@ export const KanbanColumn = ({ kanban }: { kanban: Kanban }) => {
 
   const tasks = allTasks?.filter(task => task.kanbanId === kanban.id)
 
+  const { startEdit } = useTasksModal()
+
   return (
     <Container>
       <h3>{kanban.name}</h3>
       <TasksContainer>
         {tasks?.map(task => (
-          <Card style={{ marginBottom: '0.5rem' }} key={task.id}>
+          <Card
+            onClick={() => startEdit(task.id)}
+            style={{ marginBottom: '0.5rem', cursor: 'pointer' }}
+            key={task.id}
+          >
             <div>{task.name}</div>
             <TaskTypeIcon id={task.typeId} />
           </Card>
