@@ -1,11 +1,10 @@
-import styled from '@emotion/styled'
 import { SearchPanel } from './search-panel'
 import { List } from './list'
 import { useDebounce, useDocumentTitle } from '../../utils'
 import { useProjects } from 'utils/project'
 import { useUsers } from 'utils/user'
 import { useProjectModal, useProjectsSearchParams } from './util'
-import { ButtonNoPadding, ErrorBox, Row } from 'components/lib'
+import { ButtonNoPadding, ErrorBox, Row, ScreenContainer } from 'components/lib'
 
 export const ProjectListScreen = () => {
   const { open } = useProjectModal()
@@ -17,7 +16,7 @@ export const ProjectListScreen = () => {
   useDocumentTitle('项目列表', false)
 
   return (
-    <Container>
+    <ScreenContainer>
       <Row between={true}>
         <h1>项目列表</h1>
         <ButtonNoPadding onClick={open} type={'link'}>
@@ -27,12 +26,8 @@ export const ProjectListScreen = () => {
       <SearchPanel users={users || []} param={param} setParam={setParam} />
       <ErrorBox error={error} />
       <List loading={isLoading} users={users || []} dataSource={list || []} />
-    </Container>
+    </ScreenContainer>
   )
 }
 
 ProjectListScreen.whyDidYouRender = false
-
-const Container = styled.div`
-  padding: 3.2rem;
-`
